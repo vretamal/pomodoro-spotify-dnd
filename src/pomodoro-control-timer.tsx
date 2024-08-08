@@ -1,7 +1,17 @@
-import { Detail, launchCommand, LaunchType, closeMainWindow, popToRoot, List, Icon } from "@raycast/api";
-import { ActionPanel, Action } from "@raycast/api";
+import {
+  Action,
+  ActionPanel,
+  closeMainWindow,
+  Detail,
+  Icon,
+  launchCommand,
+  LaunchType,
+  List,
+  popToRoot,
+} from "@raycast/api";
 import { useFetch } from "@raycast/utils";
 import { exec } from "child_process";
+import { FocusText, LongBreakText, ShortBreakText } from "../lib/constants";
 import {
   continueInterval,
   createInterval,
@@ -13,7 +23,6 @@ import {
   resetInterval,
   restartInterval,
 } from "../lib/intervals";
-import { FocusText, ShortBreakText, LongBreakText } from "../lib/constants";
 import { GiphyResponse, Interval, Quote } from "../lib/types";
 
 const createAction = (action: () => void) => () => {
