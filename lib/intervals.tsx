@@ -10,18 +10,25 @@ const COMPLETED_POMODORO_COUNT_CACHE_KEY = "pomodoro-interval/completed-pomodoro
 const POMODORO_INTERVAL_HISTORY = "pomodoro-interval/history";
 
 const SPOTIFY_PLAYLISTS_URI = [
-  "spotify:playlist:37i9dQZF1DWZeKCadgRdKQ",
   "spotify:playlist:37i9dQZF1DWSluGMsH1R9r",
-  "spotify:playlist:37i9dQZF1DWYmSg58uBxin",
-  "spotify:playlist:37i9dQZF1DX8wWHvPMMfNA",
-  "spotify:playlist:37i9dQZF1DX45qfzFXwcta",
   "spotify:playlist:37i9dQZF1DWVTkoPB1rnwz",
+  "spotify:playlist:37i9dQZF1DWYmSg58uBxin",
+  "spotify:playlist:37i9dQZF1DWZeKCadgRdKQ",
   "spotify:playlist:37i9dQZF1DWZZbwlv3Vmtr",
+  "spotify:playlist:37i9dQZF1DX45qfzFXwcta",
+  "spotify:playlist:37i9dQZF1DX8wWHvPMMfNA",
+  "spotify:playlist:37i9dQZF1EIgmtXxO8Udgu",
+  "spotify:playlist:5vImPKH5smp2ifK34N6XTd",
 ];
 
 const getSpotifyPlaylist = () => {
-  const randomIndex = Math.floor(Math.random() * SPOTIFY_PLAYLISTS_URI.length);
-  return SPOTIFY_PLAYLISTS_URI[randomIndex];
+  try {
+    const playlists = JSON.parse(preferences.playlists);
+    const randomIndex = Math.floor(Math.random() * playlists.length);
+    return playlists[randomIndex];
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const playRandomSpotifyPlaylist = async () => {
@@ -109,19 +116,23 @@ export function createInterval(type: IntervalType, isFreshStart?: boolean): Inte
   cache.set(CURRENT_INTERVAL_CACHE_KEY, JSON.stringify(interval));
   saveIntervalHistory(interval).then();
   if (type === "focus") {
-    launchCommand({
-      extensionName: "do-not-disturb",
-      name: "on",
-      ownerOrAuthorName: "yakitrak",
-      type: LaunchType.Background,
-    });
-    playRandomSpotifyPlaylist()
-      .then(() => {
-        console.log("Playing random Spotify playlist");
-      })
-      .catch((error) => {
-        console.error(error);
+    if (preferences.fullFocus) {
+      launchCommand({
+        extensionName: "do-not-disturb",
+        name: "on",
+        ownerOrAuthorName: "yakitrak",
+        type: LaunchType.Background,
       });
+    }
+    if (preferences.playMusic) {
+      playRandomSpotifyPlaylist()
+        .then(() => {
+          console.log("Playing random Spotify playlist");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   }
   return interval;
 }
@@ -157,19 +168,23 @@ export function continueInterval(): Interval | undefined {
 export function resetInterval() {
   console.log("restating interval");
   try {
-    launchCommand({
-      extensionName: "do-not-disturb",
-      name: "off",
-      ownerOrAuthorName: "yakitrak",
-      type: LaunchType.Background,
-    });
-    stopSpotify()
-      .then(() => {
-        console.log("Spotify paused");
-      })
-      .catch((error) => {
-        console.error(error);
+    if (preferences.fullFocus) {
+      launchCommand({
+        extensionName: "do-not-disturb",
+        name: "off",
+        ownerOrAuthorName: "yakitrak",
+        type: LaunchType.Background,
       });
+    }
+    if (preferences.playMusic) {
+      stopSpotify()
+        .then(() => {
+          console.log("Spotify paused");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   } catch (error) {
     console.error(error);
   }

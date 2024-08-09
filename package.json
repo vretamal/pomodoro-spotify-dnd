@@ -416,6 +416,33 @@
       "description": "Shows the image configured above when interval finishes",
       "default": true,
       "label": "Shows image when interval finishes"
+    },
+    {
+      "name": "fullFocus",
+      "type": "checkbox",
+      "required": false,
+      "title": "Enable full focus mode",
+      "description": "Turn on Do Not Disturb mode during focus",
+      "default": true,
+      "label": "Enables Do Not Disturb mode during focus intervals"
+    },
+    {
+      "name": "playMusic",
+      "type": "checkbox",
+      "required": false,
+      "title": "Spotify on focus",
+      "description": "Plays music on spotify during focus",
+      "default": false,
+      "label": "Enables music on spotify during focus intervals"
+    },
+    {
+      "name": "playlists",
+      "type": "textfield",
+      "required": false,
+      "title": "Focus playlists",
+      "description": "Javascript array of spotify playlist URIs",
+      "default": "[]",
+      "label": "Spotify playlist URIs"
     }
   ],
   "dependencies": {
